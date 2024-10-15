@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import tensorflow as tf
-#? file này là class thuật toán RBM cùng hàm trainin
+#? file này là class thuật toán RBM cùng hàm training
 class RBM:
     def __init__(self, n_visible, n_hidden, learning_rate=0.01):
         self.n_visible = n_visible
@@ -69,15 +69,32 @@ class RBM:
         else:
             print("No checkpoint found.")
 
+#>Hàm tính KL divergence
+def kl_divergence(p, q):
+    """Tính Kullback-Leibler Divergence giữa p và q."""
+    # Tránh log(0) bằng cách sử dụng tf.clip_by_value
+    p = tf.clip_by_value(p, 1e-10, 1.0)
+    q = tf.clip_by_value(q, 1e-10, 1.0)
+    return tf.reduce_sum(p * tf.math.log(p / q), axis=1)
 #>Hàm training RBM và saved model 
-def train_rbm(rbm, data, batch_size=64, epochs=10,checkpoint_dir='rbm_checkpoint'):
+def train_rbm(rbm, data, batch_size=64, epochs=10, checkpoint_dir='rbm_checkpoint'):
     num_samples = data.shape[0]
+    kl_values = []  # Danh sách để lưu KL Divergence qua các epoch
     for epoch in range(epochs):
         np.random.shuffle(data)
         for i in range(0, num_samples, batch_size):
             batch = data[i:i+batch_size]
             rbm.contrastive_divergence(batch)
-        print(f"Epoch {epoch+1} completed")
+        
+        # >>Tính KL Divergence
+        visible_probs = rbm.reconstruct(data)
+        kl_div = kl_divergence(data, visible_probs)
+        avg_kl = tf.reduce_mean(kl_div).numpy()
+        kl_values.append(avg_kl)  # Lưu giá trị vào danh sách
+        
+        print(f"Epoch {epoch + 1} completed, KL Divergence: {avg_kl:.4f}")
+        
     rbm.save_model(checkpoint_dir)
     print("Model saved.")
+    return kl_values
 

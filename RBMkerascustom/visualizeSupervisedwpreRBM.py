@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow.keras.datasets import mnist
-
+#? file này visualize model prediction sử dụng pre-training weight từ RBMmodel đã lưu 
 #> Load the trained model
 supervised_model = tf.keras.models.load_model('SupervisedwpreRBM.h5')
 

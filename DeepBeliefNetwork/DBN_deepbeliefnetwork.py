@@ -3,12 +3,12 @@ import tensorflow as tf
 from tensorflow.keras.datasets import mnist
 import matplotlib.pyplot as plt
 from tensorflow.keras.layers import Input
-#? class mô hình RBM và function training RBM (custom keras )
+#? triển khai class RBM , tạo function train DBN , tạo model train DBN
 #> Định nghĩa lớp RBM
 @tf.keras.utils.register_keras_serializable()
 class RBM(tf.keras.Model):
-    def __init__(self, n_hidden, learning_rate=0.01, **kwargs):
-        super(RBM, self).__init__(**kwargs, name='customRBM')
+    def __init__(self, n_hidden, learning_rate=0.01,  **kwargs):
+        super(RBM, self).__init__(**kwargs)
         self.n_hidden = n_hidden
         self.learning_rate = learning_rate
         self.W = None          
@@ -32,18 +32,21 @@ class RBM(tf.keras.Model):
                                        name="visible_bias")
         
         super().build(input_shape)  # Gọi super().build(input_shape) để hoàn thành việc xây dựng
+        
     def get_config(self):
         return {
             "n_hidden": self.n_hidden,
             "learning_rate": self.learning_rate
         }
+    
     @classmethod
     def from_config(cls, config):
         return cls(**config)
-    
+    #>HÀM CALL SỬA (BÊN RBM LÀ reconstruct)
     def call(self, inputs):
-        output = self.reconstruct(inputs)
-        return output
+        # Thay vì khôi phục đầu vào, chỉ cần trả về hidden_sample hoặc hidden_probs
+        hidden_probs, hidden_sample = self.forward(inputs)
+        return hidden_sample
 
     def sample_prob(self, probs):
         return tf.nn.relu(tf.sign(probs - tf.random.uniform(tf.shape(probs))))
@@ -80,49 +83,40 @@ class RBM(tf.keras.Model):
         hidden_probs, hidden_sample = self.forward(visible)
         visible_probs, visible_sample = self.backward(hidden_sample)
         return visible_probs
+
 #> Định nghĩa hàm train model (train class RBM của model)
 def train_rbm(model, data, batch_size=64, epochs=10):
     num_samples = data.shape[0]
     for epoch in range(epochs):
         np.random.shuffle(data)
         for i in range(0, num_samples, batch_size):
-            batch = data[i:i+batch_size]
-            model.layers[-1].contrastive_divergence(batch)  # Truy cập lớp RBM trong model Keras
-        print(f"Epoch {epoch+1} completed")
-"""
-if __name__=="__main__":
-    #> Dữ liệu training
+            batch = data[i:i + batch_size]
+            # Huấn luyện từng lớp RBM
+            for rbm in model.layers:  
+                if isinstance(rbm, RBM):  # Kiểm tra xem lớp hiện tại có phải là RBM không
+                    rbm.contrastive_divergence(batch)
+                    batch = rbm(batch)  # Chuyển đổi đầu ra của RBM cho lớp tiếp theo
+        print(f"Epoch {epoch + 1} completed")
+
+if __name__ == "__main__":
+    # >Dữ liệu training
     (x_train, _), (x_test, _) = mnist.load_data()
     x_train = x_train.astype(np.float32) / 255.0
     x_test = x_test.astype(np.float32) / 255.0
     x_train = x_train.reshape(x_train.shape[0], -1)
-    #%Tạo kiến trúc model
-    n_hidden = 64  # Số lượng neurong ẩn
-    rbm = RBM(n_hidden=n_hidden, learning_rate=0.01)
+
+    #% Tạo kiến trúc model
+    n_hidden1 = 64  # Số lượng neuron ẩn cho lớp RBM đầu tiên
+    n_hidden2 = 32  # Số lượng neuron ẩn cho lớp RBM thứ hai
+    rbm1 = RBM(n_hidden=n_hidden1, learning_rate=0.01, name="RBM_1")
+    rbm2 = RBM(n_hidden=n_hidden2, learning_rate=0.01, name="RBM_2")
+
     inputs = Input(shape=(784,))
-    outputs=rbm(inputs)
-    model = tf.keras.Model(inputs,outputs)
-    model.build((None,784))
-    #%train model
-    train_rbm(model, x_train, epochs=20)
-    model.save('model_rbm.h5')
-    print("Save model at model_rbm.h5")
-
-    # Load mô hình từ file .h5
-    model_reloaded = tf.keras.models.load_model('model_rbm.h5', custom_objects={'RBM': RBM})
-    print("Model reloaded from  model_rbm.h5")
-
-    visualize_reconstruction(model, x_train, index=0)
-    visualize_reconstruction(model_reloaded, x_train, index=0)
-
-
-    #% lưu tham số model
-    model.save_weights("rbm.weights.h5")
-    #%load lại model
-    model_reloaded = tf.keras.Model(inputs, rbm(inputs))
-    model_reloaded.build((None, 784))
-    model_reloaded.load_weights("rbm.weights.h5")
-
-    visualize_reconstruction(model, x_train, index=0)
-    visualize_reconstruction(model_reloaded, x_train, index=0)
-"""
+    x = rbm1(inputs)
+    outputs = rbm2(x)
+    model = tf.keras.Model(inputs, outputs)
+    model.build((None, 784))
+    #% Huấn luyện model
+    train_rbm(model, x_train, epochs=12)
+    model.save('model_dbn.h5')
+    print("Save model at model_dbn.h5")

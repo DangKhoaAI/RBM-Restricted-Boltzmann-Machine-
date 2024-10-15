@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.datasets import mnist
 import os
 from RBMcustomkeras import RBM
-
-# Định nghĩa hàm visualize model cho 10 ảnh ngẫu nhiên
+#? visualize reconstruct image qua load RBM model đã train(RBMmodel.h5)
+# >Định nghĩa hàm visualize model cho n ảnh ngẫu nhiên
 def visualize_reconstruction(model, data, num_images=10):
     # Chọn num_images chỉ số ngẫu nhiên từ 0 đến kích thước của data
     indices = np.random.choice(data.shape[0], num_images, replace=False)
@@ -45,4 +45,4 @@ model_reloaded = tf.keras.models.load_model('RBMmodel.h5', custom_objects={'RBM'
 print("Model reloaded from RBMmodel.h5")
 
 # Hiển thị 10 ảnh ngẫu nhiên
-visualize_reconstruction(model_reloaded, x_test, num_images=10)
+visualize_reconstruction(model_reloaded, x_test, num_images=8)

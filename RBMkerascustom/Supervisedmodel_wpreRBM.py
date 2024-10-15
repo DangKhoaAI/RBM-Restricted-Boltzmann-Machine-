@@ -5,7 +5,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, InputLayer
 from tensorflow.keras.optimizers import Adam
 from RBMcustomkeras import RBM  # Import the RBM class
-#? file này tạo thuật toán supervised VỚI các weight đã pretraing từ RBM
+#?  tạo thuật toán supervised VỚI các weight đã pretraing từ RBM
 #> Load the MNIST data
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_train = x_train.astype(np.float32) / 255.0

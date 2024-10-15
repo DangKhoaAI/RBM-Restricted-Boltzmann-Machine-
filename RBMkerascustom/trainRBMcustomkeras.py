@@ -4,7 +4,7 @@ from tensorflow.keras.datasets import mnist
 from tensorflow.keras.layers import Input
 from RBMcustomkeras import *
 import os
-#? file này custom keras ,train RBM trên dữ liệu mnist và save weight model
+#? train RBM trên dữ liệu mnist và save weight model(dùng custom keras save dưới dạng h5)
 # Dữ liệu training
 (x_train, _), (x_test, _) = mnist.load_data()
 x_train = x_train.astype(np.float32) / 255.0

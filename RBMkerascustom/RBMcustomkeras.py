@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.datasets import mnist
-from tensorflow.keras.layers import Input
 import matplotlib.pyplot as plt
 
 #> Định nghĩa lớp RBM
@@ -16,7 +15,7 @@ class RBM(tf.keras.Model):
         self.v_bias = None
 
     def build(self, input_shape):
-        n_visible = input_shape[-1]  # Lấy số lượng đơn vị hiển thị từ hình dạng đầu vào
+        n_visible = input_shape[-1]  
 
         self.W = self.add_weight(shape=(n_visible, self.n_hidden),
                                  initializer='random_normal',
@@ -89,27 +88,7 @@ def train_rbm(model, data, batch_size=64, epochs=10):
             batch = data[i:i+batch_size]
             model.layers[-1].contrastive_divergence(batch)  # Truy cập lớp RBM trong model Keras
         print(f"Epoch {epoch+1} completed")
-#> định nghĩa hàm visualize model
-def visualize_reconstruction(model, data, index=0):
-    original_img = data[index].reshape(1, -1)
-    reconstructed_img = model.predict(original_img)
-
-    original_img = original_img.reshape(28, 28)
-    reconstructed_img = reconstructed_img.reshape(28, 28)
-
-    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
-
-    # Ảnh gốc
-    axes[0].imshow(original_img, cmap="gray")
-    axes[0].set_title("Ảnh gốc")
-    axes[0].axis('off')
-
-    # Ảnh tái tạo
-    axes[1].imshow(reconstructed_img, cmap="gray")
-    axes[1].set_title("Ảnh tái tạo")
-    axes[1].axis('off')
-
-    plt.show()
+"""
 if __name__=="__main__":
     #> Dữ liệu training
     (x_train, _), (x_test, _) = mnist.load_data()
@@ -136,7 +115,7 @@ if __name__=="__main__":
     visualize_reconstruction(model, x_train, index=0)
     visualize_reconstruction(model_reloaded, x_train, index=0)
 
-    """
+
     #% lưu tham số model
     model.save_weights("rbm.weights.h5")
     #%load lại model
@@ -146,4 +125,4 @@ if __name__=="__main__":
 
     visualize_reconstruction(model, x_train, index=0)
     visualize_reconstruction(model_reloaded, x_train, index=0)
-    """
+"""

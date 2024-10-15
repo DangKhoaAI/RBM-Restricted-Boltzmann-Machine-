@@ -69,7 +69,7 @@ class RBM:
         else:
             print("No checkpoint found.")
 
-#>Training RBM và saved model 
+#>Hàm training RBM và saved model 
 def train_rbm(rbm, data, batch_size=64, epochs=10,checkpoint_dir='rbm_checkpoint'):
     num_samples = data.shape[0]
     for epoch in range(epochs):

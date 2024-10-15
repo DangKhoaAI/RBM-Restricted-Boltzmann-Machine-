@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from RBM import RBM ,train_rbm
+#> tạo data
 (x_train, _), (x_test, _) = mnist.load_data()
-x_train = (x_train > 127).astype(np.float32)  # Chuẩn hóa về nhị phân (0, 1)
+x_train = x_train.astype(np.float32) / 255.0
+x_test = x_test.astype(np.float32) / 255.0
 x_train = x_train.reshape(x_train.shape[0], -1)
-
 #> Khởi tạo và huấn luyện RBM
 n_visible = 784  # Số lượng pixel trong ảnh MNIST (28x28)
 n_hidden = 128    # Số lượng neuron ẩn

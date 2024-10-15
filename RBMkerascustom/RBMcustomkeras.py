@@ -111,14 +111,14 @@ def visualize_reconstruction(model, data, index=0):
 
     plt.show()
 if __name__=="__main__":
-    # Dữ liệu training
+    #> Dữ liệu training
     (x_train, _), (x_test, _) = mnist.load_data()
     x_train = x_train.astype(np.float32) / 255.0
     x_test = x_test.astype(np.float32) / 255.0
     x_train = x_train.reshape(x_train.shape[0], -1)
 
     #%Tạo kiến trúc model
-    n_hidden = 64  # Số lượng neuron ẩn
+    n_hidden = 64  # Số lượng neurong ẩn
     rbm = RBM(n_hidden=n_hidden, learning_rate=0.01)
     inputs = Input(shape=(784,))
     outputs=rbm(inputs)
@@ -135,7 +135,7 @@ if __name__=="__main__":
 
     visualize_reconstruction(model, x_train, index=0)
     visualize_reconstruction(model_reloaded, x_train, index=0)
-    
+
     """
     #% lưu tham số model
     model.save_weights("rbm.weights.h5")

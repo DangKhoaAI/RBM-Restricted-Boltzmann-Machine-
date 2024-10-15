@@ -28,7 +28,8 @@ def visualize_reconstruction(rbm, data, index=0):
 
 #%Tải dữ liệu MNIST
 (x_train, _), (x_test, _) = mnist.load_data()
-x_train = (x_train > 127).astype(np.float32)
+x_train = x_train.astype(np.float32) / 255.0
+x_test = x_test.astype(np.float32) / 255.0
 x_train = x_train.reshape(x_train.shape[0], -1)
 
 #% Khởi tạo RBM

@@ -52,7 +52,7 @@ x_train = x_train.reshape(x_train.shape[0], -1)
 #% Initialize RBM
 n_visible = 784  # Number of pixels in MNIST image
 n_hidden = 256   # Number of hidden neurons
-rbm = RBM(n_visible=n_visible, n_hidden=n_hidden, learning_rate=0.01)
+rbm = RBMsklearn(n_visible=n_visible, n_hidden=n_hidden, learning_rate=0.01)
 
 #% Load model from checkpoint
 rbm.load_model('rbm_model.pkl')  

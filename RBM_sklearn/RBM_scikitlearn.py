@@ -11,7 +11,7 @@ from sklearn.neural_network import BernoulliRBM
 from sklearn.preprocessing import MinMaxScaler
 from joblib import dump, load
 
-class RBM:
+class RBMsklearn:
     def __init__(self, n_visible, n_hidden, learning_rate=0.01, batch_size=10, n_iter=10):
         self.n_visible = n_visible
         self.n_hidden = n_hidden
@@ -22,11 +22,14 @@ class RBM:
         # Khởi tạo RBM
         self.rbm = BernoulliRBM(n_components=self.n_hidden, learning_rate=self.learning_rate, 
                                 batch_size=self.batch_size, n_iter=self.n_iter, verbose=1)
-    #>> học rbm
+    #_> học rbm
     def contrastive_divergence(self, data):
         # Fit dữ liệu vào RBM
         self.rbm.fit(data)
-    #>> tái tạo ảnh ban đầu
+    #_> hàm transform
+    def transform(self, visible):
+        return self.rbm.transform(visible)
+    #_> tái tạo ảnh ban đầu
     def reconstruct(self, visible):
         # Transform visible units to hidden activations
         hidden_activations = self.rbm.transform(visible)
@@ -42,7 +45,7 @@ class RBM:
         reconstructed_visible = 1 / (1 + np.exp(-visible_probs))
 
         return reconstructed_visible
-    #>> tính kl divergence
+    #_> tính kl divergence
     def calculate_kl_divergence(self, data):
         # Reconstruct the visible layer after training
         reconstructed_data = self.reconstruct(data)
@@ -94,7 +97,7 @@ if __name__ == "__main__":
     #% Check if the model file already exists
     if not os.path.exists(model_file):
         #% Initialize RBM with 784 visible units and 256 hidden units
-        rbm = RBM(n_visible=784, n_hidden=256, learning_rate=0.01, batch_size=64, n_iter=10)
+        rbm = RBMsklearn(n_visible=784, n_hidden=256, learning_rate=0.01, batch_size=64, n_iter=10)
         
         #% Train the RBM (this runs for 10 iterations automatically)
         rbm.contrastive_divergence(x_train)

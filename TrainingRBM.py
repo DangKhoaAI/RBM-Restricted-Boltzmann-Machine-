@@ -26,5 +26,3 @@ plt.ylabel('KL Divergence')
 plt.xticks(np.arange(1, len(kl_values) + 1, step=1))
 plt.grid()
 plt.show()
-
-

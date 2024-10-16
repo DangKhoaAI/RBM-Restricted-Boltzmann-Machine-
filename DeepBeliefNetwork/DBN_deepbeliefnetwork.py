@@ -3,7 +3,7 @@ import tensorflow as tf
 from tensorflow.keras.datasets import mnist
 import matplotlib.pyplot as plt
 from tensorflow.keras.layers import Input
-#? triển khai class RBM , tạo function train DBN , tạo model train DBN
+#? triển khai class RBM , tạo function train DBN -> train DBN và save vào model_dbn.h5
 #> Định nghĩa lớp RBM
 @tf.keras.utils.register_keras_serializable()
 class RBM(tf.keras.Model):

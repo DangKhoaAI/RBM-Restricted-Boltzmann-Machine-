@@ -33,16 +33,16 @@ def visualize_reconstruction(model, data, num_images=10):
     plt.tight_layout()
     plt.show()
 
-# Tải dữ liệu MNIST
+#% Tải dữ liệu MNIST
 (x_train, _), (x_test, _) = mnist.load_data()
 x_train = x_train.astype(np.float32) / 255.0
 x_test = x_test.astype(np.float32) / 255.0
 x_train = x_train.reshape(x_train.shape[0], -1)
 x_test = x_test.reshape(x_test.shape[0], -1)
 
-# Nạp mô hình đã lưu
+#% Nạp mô hình đã lưu
 model_reloaded = tf.keras.models.load_model('RBMmodel.h5', custom_objects={'RBM': RBM})
 print("Model reloaded from RBMmodel.h5")
 
-# Hiển thị 10 ảnh ngẫu nhiên
+#% Hiển thị 10 ảnh ngẫu nhiên
 visualize_reconstruction(model_reloaded, x_test, num_images=8)

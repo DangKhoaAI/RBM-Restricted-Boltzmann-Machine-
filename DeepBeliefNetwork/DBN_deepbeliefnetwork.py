@@ -6,9 +6,9 @@ from tensorflow.keras.layers import Input
 #? triển khai class RBM , tạo function train DBN -> train DBN và save vào model_dbn.h5
 #> Định nghĩa lớp RBM
 @tf.keras.utils.register_keras_serializable()
-class RBM(tf.keras.Model):
+class RBM_dbn(tf.keras.Model):
     def __init__(self, n_hidden, learning_rate=0.01,  **kwargs):
-        super(RBM, self).__init__(**kwargs)
+        super(RBM_dbn, self).__init__(**kwargs)
         self.n_hidden = n_hidden
         self.learning_rate = learning_rate
         self.W = None          
@@ -93,7 +93,7 @@ def train_rbm(model, data, batch_size=64, epochs=10):
             batch = data[i:i + batch_size]
             # Huấn luyện từng lớp RBM
             for rbm in model.layers:  
-                if isinstance(rbm, RBM):  # Kiểm tra xem lớp hiện tại có phải là RBM không
+                if isinstance(rbm, RBM_dbn):  # Kiểm tra xem lớp hiện tại có phải là RBM không
                     rbm.contrastive_divergence(batch)
                     batch = rbm(batch)  # Chuyển đổi đầu ra của RBM cho lớp tiếp theo
         print(f"Epoch {epoch + 1} completed")
@@ -106,10 +106,10 @@ if __name__ == "__main__":
     x_train = x_train.reshape(x_train.shape[0], -1)
 
     #% Tạo kiến trúc model
-    n_hidden1 = 64  # Số lượng neuron ẩn cho lớp RBM đầu tiên
-    n_hidden2 = 32  # Số lượng neuron ẩn cho lớp RBM thứ hai
-    rbm1 = RBM(n_hidden=n_hidden1, learning_rate=0.01, name="RBM_1")
-    rbm2 = RBM(n_hidden=n_hidden2, learning_rate=0.01, name="RBM_2")
+    n_hidden1 = 256  # Số lượng neuron ẩn cho lớp RBM đầu tiên
+    n_hidden2 = 128  # Số lượng neuron ẩn cho lớp RBM thứ hai
+    rbm1 = RBM_dbn(n_hidden=n_hidden1, learning_rate=0.01, name="RBM_1")
+    rbm2 = RBM_dbn(n_hidden=n_hidden2, learning_rate=0.01, name="RBM_2")
 
     inputs = Input(shape=(784,))
     x = rbm1(inputs)

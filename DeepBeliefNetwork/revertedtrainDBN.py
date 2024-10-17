@@ -10,8 +10,8 @@ from DBN_deepbeliefnetwork import *
 def create_mlp_model():
     model = Sequential([
         Flatten(input_shape=(28, 28)),  # Chuyển đổi hình ảnh 28x28 thành vector 784
-        Dense(128, activation='sigmoid'),   # Lớp ẩn đầu tiên
-        Dense(64, activation='sigmoid'),    # Lớp ẩn thứ hai
+        Dense(256, activation='sigmoid'),   # Lớp ẩn đầu tiên
+        Dense(128, activation='sigmoid'),    # Lớp ẩn thứ hai
         Dense(10, activation='softmax')   # Lớp đầu ra với 10 neuron (0-9)
     ])
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
@@ -35,7 +35,7 @@ def transfer_weights_to_rbm(rbm, mlp_layer):
 # > Chuyển trọng số vào DBN
 def transfer_weights_to_dbs(rbm_model, mlp_model):
     mlp_layers = [layer for layer in mlp_model.layers if isinstance(layer, Dense)][:2]
-    rbm_layers = [layer for layer in rbm_model.layers if isinstance(layer, RBM)]
+    rbm_layers = [layer for layer in rbm_model.layers if isinstance(layer, RBM_dbn)]
     
     for rbm, mlp_layer in zip(rbm_layers, mlp_layers):
         transfer_weights_to_rbm(rbm, mlp_layer)   # Chuyển weights từ MLP sang RBM
@@ -66,10 +66,10 @@ if __name__ == "__main__":
     mlp_model = tf.keras.models.load_model('model_mlp.h5')
     #% tạo kiến trúc DBN
     # Tạo kiến trúc model
-    n_hidden1 = 128  # Số lượng neuron ẩn cho lớp RBM đầu tiên
-    n_hidden2 = 64  # Số lượng neuron ẩn cho lớp RBM thứ hai
-    rbm1 = RBM(n_hidden=n_hidden1, learning_rate=0.01, name="RBM_1")
-    rbm2 = RBM(n_hidden=n_hidden2, learning_rate=0.01, name="RBM_2")
+    n_hidden1 = 256  # Số lượng neuron ẩn cho lớp RBM đầu tiên
+    n_hidden2 = 128  # Số lượng neuron ẩn cho lớp RBM thứ hai
+    rbm1 = RBM_dbn(n_hidden=n_hidden1, learning_rate=0.01, name="RBM_1")
+    rbm2 = RBM_dbn(n_hidden=n_hidden2, learning_rate=0.01, name="RBM_2")
 
     inputs = Input(shape=(784,))
     x = rbm1(inputs)
@@ -80,5 +80,5 @@ if __name__ == "__main__":
     # > Chuyển trọng số vào DBN
     transfer_weights_to_dbs(model, mlp_model)
     print("Weights transferred from MLP to DBN.")
-    train_rbm(model, x_train_flat, epochs=2)
+    train_rbm(model, x_train_flat, epochs=5)
     model.save('reverted_dbn.h5')
